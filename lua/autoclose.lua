@@ -132,10 +132,10 @@ local function handler(key, info, mode)
          return key
       end
 
-      return info.pair .. (mode == "insert" and "<C-G>U<Left>" or "<Left>")
-   else
-      return key
-   end
+        return info.pair .. (mode == "insert" and "<C-G>U" .. info.lefts or info.lefts)
+    else
+        return key
+    end
 end
 
 function autoclose.setup(user_config)
@@ -154,6 +154,9 @@ function autoclose.setup(user_config)
    end
 
    for key, info in pairs(config.keys) do
+      if info.pair ~= nil then
+         info.lefts = string.rep("<left>", #info.pair / 2)
+      end
       vim.keymap.set("i", key, function()
          return (key == " " and "<C-]>" or "") .. handler(key, info, "insert")
       end, { noremap = true, expr = true })
